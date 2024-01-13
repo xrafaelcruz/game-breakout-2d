@@ -90,8 +90,12 @@
           dx = -dx;
         }
 
-        if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+        if (y + dy < ballRadius) {
           dy = -dy;
+        } else if (y + dy > canvas.height - ballRadius) {
+          alert("GAME OVER");
+          document.location.reload();
+          clearInterval(interval); // Needed for Chrome to end game
         }
 
         x += dx;
@@ -105,7 +109,7 @@
         }
       }
 
-      setInterval(draw, 10);
+      const interval = setInterval(draw, 10);
     </script>
   </body>
 </html>
