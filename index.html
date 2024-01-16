@@ -48,11 +48,17 @@
 
         // kick type
         ball.body.bounce.set(1);
+        // ball.body.gravity.y = 100;
 
         // Centers the ball on the canvas bottom
         ball.anchor.set(1);
 
-        // ball.body.gravity.y = 100;
+        // When ball touch de bottom bound because checkCollision.down = false
+        ball.checkWorldBounds = true;
+        ball.events.onOutOfBounds.add(() => {
+          alert("Game over!");
+          location.reload();
+        }, this);
 
         // PADDLE
         paddle = game.add.sprite(
@@ -68,6 +74,9 @@
 
         // Prevents the paddle from falling when the ball collides
         paddle.body.immovable = true;
+
+        // GAME
+        game.physics.arcade.checkCollision.down = false;
       }
 
       function update() {
