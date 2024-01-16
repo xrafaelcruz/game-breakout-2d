@@ -20,6 +20,7 @@
       });
 
       let ball;
+      let paddle;
 
       function preload() {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -28,23 +29,53 @@
         game.stage.backgroundColor = "#eee";
 
         game.load.image("ball", "img/ball.png");
+        game.load.image("paddle", "img/paddle.png");
       }
 
       function create() {
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        ball = game.add.sprite(50, 50, "ball");
-
+        // BALL
+        ball = game.add.sprite(
+          game.world.width * 0.5,
+          game.world.height - 25,
+          "ball"
+        );
         game.physics.enable(ball, Phaser.Physics.ARCADE);
 
         ball.body.collideWorldBounds = true;
         ball.body.velocity.set(150, 150);
+
+        // kick type
         ball.body.bounce.set(1);
 
+        // Centers the ball on the canvas bottom
+        ball.anchor.set(1);
+
         // ball.body.gravity.y = 100;
+
+        // PADDLE
+        paddle = game.add.sprite(
+          game.world.width * 0.5,
+          game.world.height - 5,
+          "paddle"
+        );
+
+        // Centers the paddle on the canvas bottom
+        paddle.anchor.set(0.5, 1);
+
+        game.physics.enable(paddle, Phaser.Physics.ARCADE);
+
+        // Prevents the paddle from falling when the ball collides
+        paddle.body.immovable = true;
       }
 
-      function update() {}
+      function update() {
+        game.physics.arcade.collide(ball, paddle);
+
+        // game.world.width * 0.5 = in the center of the canvas
+        paddle.x = game.input.x || game.world.width * 0.5;
+      }
     </script>
   </body>
 </html>
