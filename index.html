@@ -37,7 +37,10 @@
 
         game.physics.enable(ball, Phaser.Physics.ARCADE);
 
+        ball.body.collideWorldBounds = true;
         ball.body.velocity.set(150, 150);
+        ball.body.bounce.set(1);
+
         // ball.body.gravity.y = 100;
       }
 
