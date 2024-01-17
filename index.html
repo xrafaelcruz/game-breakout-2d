@@ -70,7 +70,13 @@
       }
 
       function ballHitBrick(ball, brick) {
-        brick.kill();
+        const killTween = game.add.tween(brick.scale);
+        killTween.to({ x: 0, y: 0 }, 200, Phaser.Easing.Linear.None);
+        //   .to({ x: 2, y: 2 }, 500, Phaser.Easing.Elastic.Out, true, 100);
+        killTween.onComplete.addOnce(() => {
+          brick.kill();
+        }, this);
+        killTween.start();
 
         score += 10;
         scoreText.setText(`Points: ${score}`);
@@ -87,6 +93,10 @@
           alert("You won the game, congratulations!");
           location.reload();
         }
+      }
+
+      function ballHitPaddle(ball, paddle) {
+        ball.animations.play("wobble");
       }
 
       function ballLeaveScreen() {
@@ -117,20 +127,23 @@
         game.scale.pageAlignVertically = true;
         game.stage.backgroundColor = "#eee";
 
-        game.load.image("ball", "img/ball.png");
         game.load.image("paddle", "img/paddle.png");
         game.load.image("brick", "img/brick.png");
+
+        // 20, 20 = width and height of each image in the sprite
+        game.load.spritesheet("ball", "img/wobble.png", 20, 20);
       }
 
       function create() {
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // BALL
-        ball = game.add.sprite(
-          game.world.width * 0.5,
-          game.world.height - 25,
-          "ball"
-        );
+        ball = game.add.sprite(50, 250, "ball");
+
+        // 0, 1, 2 = positions of each image in the sprite
+        // 24 fps
+        ball.animations.add("wobble", [0, 1, 0, 2, 0, 1, 0, 2, 0], 24);
+
         game.physics.enable(ball, Phaser.Physics.ARCADE);
 
         ball.body.collideWorldBounds = true;
@@ -192,7 +205,7 @@
       }
 
       function update() {
-        game.physics.arcade.collide(ball, paddle);
+        game.physics.arcade.collide(ball, paddle, ballHitPaddle);
         game.physics.arcade.collide(ball, bricks, ballHitBrick);
 
         // game.world.width * 0.5 = in the center of the canvas
