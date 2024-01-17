@@ -24,6 +24,8 @@
       let bricks;
       let newBrick;
       let brickInfo;
+      let scoreText;
+      let score = 0;
 
       function initBricks() {
         brickInfo = {
@@ -64,6 +66,9 @@
 
       function ballHitBrick(ball, brick) {
         brick.kill();
+
+        score += 10;
+        scoreText.setText(`Points: ${score}`);
       }
 
       function preload() {
@@ -119,6 +124,12 @@
 
         // Prevents the paddle from falling when the ball collides
         paddle.body.immovable = true;
+
+        // SCORE
+        scoreText = game.add.text(5, 5, "Points: 0", {
+          font: "18px Arial",
+          fill: "#0095DD",
+        });
 
         // GAME
         game.physics.arcade.checkCollision.down = false;
