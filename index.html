@@ -26,6 +26,11 @@
       let brickInfo;
       let scoreText;
       let score = 0;
+      let lives = 3;
+      let livesText;
+      let lifeLostText;
+
+      textStyle = { font: "18px Arial", fill: "#0095DD" };
 
       function initBricks() {
         brickInfo = {
@@ -84,6 +89,28 @@
         }
       }
 
+      function ballLeaveScreen() {
+        lives--;
+
+        if (lives) {
+          livesText.setText(`Lives: ${lives}`);
+          lifeLostText.visible = true;
+
+          ball.reset(game.world.width * 0.5, game.world.height - 25);
+          paddle.reset(game.world.width * 0.5, game.world.height - 5);
+
+          // on key down or click on screen
+          // addOnce = executes the function only once
+          game.input.onDown.addOnce(() => {
+            lifeLostText.visible = false;
+            ball.body.velocity.set(150, -150);
+          }, this);
+        } else {
+          alert("You lost, game over!");
+          location.reload();
+        }
+      }
+
       function preload() {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.scale.pageAlignHorizontally = true;
@@ -118,10 +145,7 @@
 
         // When ball touch de bottom bound because checkCollision.down = false
         ball.checkWorldBounds = true;
-        ball.events.onOutOfBounds.add(() => {
-          alert("Game over!");
-          location.reload();
-        }, this);
+        ball.events.onOutOfBounds.add(ballLeaveScreen, this);
 
         // PADDLE
         paddle = game.add.sprite(
@@ -139,10 +163,27 @@
         paddle.body.immovable = true;
 
         // SCORE
-        scoreText = game.add.text(5, 5, "Points: 0", {
-          font: "18px Arial",
-          fill: "#0095DD",
-        });
+        scoreText = game.add.text(5, 5, "Points: 0", textStyle);
+
+        // LIVES
+        livesText = game.add.text(
+          game.world.width - 5,
+          5,
+          `Lives: ${lives}`,
+          textStyle
+        );
+
+        livesText.anchor.set(1, 0);
+
+        lifeLostText = game.add.text(
+          game.world.width * 0.5,
+          game.world.height * 0.5,
+          "Life lost, click to continue",
+          textStyle
+        );
+
+        lifeLostText.anchor.set(0.5);
+        lifeLostText.visible = false;
 
         // GAME
         game.physics.arcade.checkCollision.down = false;
