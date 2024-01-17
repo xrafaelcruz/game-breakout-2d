@@ -83,15 +83,7 @@
         score += 10;
         scoreText.setText(`Points: ${score}`);
 
-        let count_alive = 0;
-
-        for (let i = 0; i < bricks.children.length; i++) {
-          if (bricks.children[i].alive) {
-            count_alive++;
-          }
-        }
-
-        if (count_alive === 0) {
+        if (score === brickInfo.count.row * brickInfo.count.col * 10) {
           alert("You won the game, congratulations!");
           location.reload();
         }
@@ -99,6 +91,7 @@
 
       function ballHitPaddle(ball, paddle) {
         ball.animations.play("wobble");
+        ball.body.velocity.x = -5 * (paddle.x - ball.x);
       }
 
       function ballLeaveScreen() {
