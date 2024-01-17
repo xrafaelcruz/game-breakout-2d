@@ -29,6 +29,8 @@
       let lives = 3;
       let livesText;
       let lifeLostText;
+      let playing = false;
+      let startButton;
 
       textStyle = { font: "18px Arial", fill: "#0095DD" };
 
@@ -121,6 +123,12 @@
         }
       }
 
+      function startGame() {
+        startButton.destroy();
+        ball.body.velocity.set(150, -150);
+        playing = true;
+      }
+
       function preload() {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.scale.pageAlignHorizontally = true;
@@ -132,6 +140,8 @@
 
         // 20, 20 = width and height of each image in the sprite
         game.load.spritesheet("ball", "img/wobble.png", 20, 20);
+
+        game.load.spritesheet("button", "img/button.png", 120, 40);
       }
 
       function create() {
@@ -147,7 +157,6 @@
         game.physics.enable(ball, Phaser.Physics.ARCADE);
 
         ball.body.collideWorldBounds = true;
-        ball.body.velocity.set(150, 150);
 
         // kick type
         ball.body.bounce.set(1);
@@ -202,6 +211,20 @@
         game.physics.arcade.checkCollision.down = false;
 
         initBricks();
+
+        // BUTTON
+        startButton = game.add.button(
+          game.world.width * 0.5,
+          game.world.height * 0.5,
+          "button",
+          startGame,
+          this,
+          1, // frame to over event
+          0, // frame to out event
+          2 // frame to down event
+        );
+
+        startButton.anchor.set(0.5);
       }
 
       function update() {
@@ -209,7 +232,9 @@
         game.physics.arcade.collide(ball, bricks, ballHitBrick);
 
         // game.world.width * 0.5 = in the center of the canvas
-        paddle.x = game.input.x || game.world.width * 0.5;
+        if (playing) {
+          paddle.x = game.input.x || game.world.width * 0.5;
+        }
       }
     </script>
   </body>
